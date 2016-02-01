@@ -66,15 +66,17 @@ window.onload = function() {
         // new trajectory.
         bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 500, 500, 500 );
 
-    bouncy1.x = game.input.mousePointer.x;
-    bouncy1.y = game.input.mousePointer.y;
-    
-	game.physics.arcade.collide(bouncy, bouncy1, updateText, this);
+	    bouncy1.x = game.input.mousePointer.x;
+	    bouncy1.y = game.input.mousePointer.y;
+	    
+	//	game.physics.arcade.collide(bouncy, bouncy1, updateText, this);
+		if(game.physics.arcade.collide(bouncy, bouncy1)) {
+			updateText();
+		}
     }
     
     fuction updateText() {
     	text.setText("- You loose!");
     	
-    }
     }
 };
