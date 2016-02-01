@@ -43,6 +43,9 @@ window.onload = function() {
         // Make it bounce off of the world bounds.
         bouncy.body.collideWorldBounds = true;
         bouncy1.body.collideWorldBounds = true;
+        
+        bouncy.scale.setTo( .1, .1 );
+        bouncy1.scale.setTo( .1, .1 );
 
         
         // Add some text using a CSS style.
