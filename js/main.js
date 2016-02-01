@@ -46,6 +46,8 @@ window.onload = function() {
         
         bouncy.scale.setTo( .1, .1 );
         bouncy1.scale.setTo( .1, .1 );
+        
+        
 
         
         // Add some text using a CSS style.
@@ -62,6 +64,8 @@ window.onload = function() {
         // This function returns the rotation angle that makes it visually match its
         // new trajectory.
         bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 500, 500, 500 );
-        bouncy1.rotation = game.physics.arcade.accelerateToPointer( bouncy1, this.game.input.activePointer, 500, 500, 500 );
+
+    bouncy1.x = game.input.mousePointer.x;
+    bouncy1.y = game.input.mousePointer.y;
     }
 };
