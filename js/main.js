@@ -46,7 +46,7 @@ window.onload = function() {
         bouncy1.body.collideWorldBounds = true;
         
         bouncy.scale.setTo( .1, .1 );
-        bouncy1.scale.setTo( .1, .1 );
+        bouncy1.scale.setTo( .05, .05 );
         
         
 
@@ -69,7 +69,7 @@ window.onload = function() {
 	    bouncy1.x = game.input.mousePointer.x;
 	    bouncy1.y = game.input.mousePointer.y;
 	    
-	    game.physics.arcade.collide(bouncy, bouncy1, updateText);
+	    game.physics.arcade.overlap(bouncy, bouncy1, updateText);
     	//updateText();
     }
     
