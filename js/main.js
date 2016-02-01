@@ -26,7 +26,7 @@ window.onload = function() {
     var bouncy1;
     var text;
     var loose = false;
-    var enemySpeed = 1.001;
+    var enemySpeed = 1.0005;
     //var bouncy2;
     
     function create() {
@@ -52,7 +52,7 @@ window.onload = function() {
         bouncy1.body.setSize(bouncy1.body.width *.1, bouncy1.body.height*.1);
 //        bouncy1.body.setCircle(3);
         
-        bouncy.body.velocity.setTo(100,100);
+        bouncy.body.velocity.setTo(200,210);
         bouncy.body.bounce.setTo(1,1);
 
         
