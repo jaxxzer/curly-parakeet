@@ -13,7 +13,7 @@ window.onload = function() {
     
     "use strict";
     
-    var game = new Phaser.Game( 800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
+    var game = new Phaser.Game( 1000, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
     
     function preload() {
         // Load an image and call it 'logo'.
@@ -24,7 +24,7 @@ window.onload = function() {
     
     var bouncy;
     var bouncy1;
-    var bouncy2;
+    //var bouncy2;
     
     function create() {
         // Create a sprite at the center of the screen using the 'logo' image.
@@ -59,5 +59,6 @@ window.onload = function() {
         // This function returns the rotation angle that makes it visually match its
         // new trajectory.
         bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 500, 500, 500 );
+        bouncy1.rotation = game.physics.arcade.accelerateToPointer( bouncy1, this.game.input.activePointer, 500, 500, 500 );
     }
 };
