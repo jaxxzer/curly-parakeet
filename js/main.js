@@ -77,7 +77,6 @@ window.onload = function() {
 		    game.physics.arcade.overlap(bouncy, bouncy1, updateText);
 		    
 		}
-    	updateText();
     }
     
     function updateText() {
