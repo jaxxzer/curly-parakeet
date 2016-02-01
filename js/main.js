@@ -26,7 +26,7 @@ window.onload = function() {
     var bouncy1;
     var text;
     var loose = false;
-    var enemySpeed = 10;
+    var enemySpeed = 1.01;
     //var bouncy2;
     
     function create() {
@@ -52,7 +52,7 @@ window.onload = function() {
         bouncy1.body.setSize(bouncy1.body.width *.1, bouncy1.body.height*.1);
 //        bouncy1.body.setCircle(3);
         
-        bouncy.body.velocity.setTo(enemySpeed, enemySpeed);
+        bouncy.body.velocity.setTo(100,100);
         bouncy.body.bounce.setTo(1,1);
 
         
@@ -76,8 +76,8 @@ window.onload = function() {
 		    text.setText(this.game.time.totalElapsedSeconds().toFixed(2));
 
 		    game.physics.arcade.overlap(bouncy, bouncy1, updateText);
-	        bouncy.body.velocity.setTo(enemySpeed, enemySpeed);
-	        enemySpeed++;
+	        bouncy.body.velocity.setTo(bouncy.body.velocity.x * enemySpeed, bouncy.body.velocity.y *enemySpeed);
+	        
 		    
 		}
     }
