@@ -71,6 +71,8 @@ window.onload = function() {
 	    bouncy1.y = game.input.mousePointer.y;
 	    
 	    game.physics.arcade.collide(bouncy, bouncy1, updateText);
+	    
+	    text.setText(this.game.time.totalElapsedSeconds());
     	//updateText();
     }
     
