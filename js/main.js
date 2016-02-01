@@ -79,11 +79,13 @@ window.onload = function() {
 	        bouncy.body.velocity.setTo(bouncy.body.velocity.x * enemySpeed, bouncy.body.velocity.y *enemySpeed);
 	        
 		    
+		} else {
+		    text.setText("Game Over!\nYou lasted: " + this.game.time.totalElapsedSeconds() + " seconds!");
+
 		}
     }
     
     function updateText() {
-	    text.setText("Game Over!\nYou lasted: " + this.game.time.totalElapsedSeconds().toFixed(2).toString() + " seconds!");
 
     	//text.setText("hello");
     	loose = true;
