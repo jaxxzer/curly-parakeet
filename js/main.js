@@ -25,6 +25,7 @@ window.onload = function() {
     var bouncy;
     var bouncy1;
     //var bouncy2;
+    var text;
     
     function create() {
         // Create a sprite at the center of the screen using the 'logo' image.
@@ -53,7 +54,7 @@ window.onload = function() {
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
         var style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
-        var text = game.add.text( game.world.centerX, 15, "Build something awesome.", style );
+        text = game.add.text( game.world.centerX, 15, "Build something awesome.", style );
         text.anchor.setTo( 0.5, 0.0 );
     }
     
@@ -67,5 +68,13 @@ window.onload = function() {
 
     bouncy1.x = game.input.mousePointer.x;
     bouncy1.y = game.input.mousePointer.y;
+    
+	game.physics.arcade.collide(bouncy, bouncy1, updateText);
+    }
+    
+    fuction updateText() {
+    	text.setText("- You loose!");
+    	
+    }
     }
 };
