@@ -70,9 +70,9 @@ window.onload = function() {
 	    bouncy1.x = game.input.mousePointer.x;
 	    bouncy1.y = game.input.mousePointer.y;
 	    
-	    game.physics.arcade.collide(bouncy, bouncy1, updateText);
+	    game.physics.arcade.overlap(bouncy, bouncy1, updateText);
 	    
-	    text.setText(this.game.time.totalElapsedSeconds());
+	    text.setText(String.format(this.game.time.totalElapsedSeconds().toFixed(2));
     	//updateText();
     }
     
