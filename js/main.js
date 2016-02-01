@@ -17,8 +17,8 @@ window.onload = function() {
     
     function preload() {
         // Load an image and call it 'logo'.
-        game.load.image( 'logo', 'assets/phaser.png' );
-//        game.load.image( 'bomb', 'assets/bomb.png' );
+//        game.load.image( 'logo', 'assets/phaser.png' );
+        game.load.image( 'bomb', 'assets/bomb.png' );
 //        game.load.image( 'mario', 'assets/mario.png' );
     }
     
@@ -26,9 +26,9 @@ window.onload = function() {
     
     function create() {
         // Create a sprite at the center of the screen using the 'logo' image.
-        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'logo' );
+//        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'logo' );
 //        bouncy1 = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
-//        bouncy2 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
+        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
 //        bouncy3 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
        // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
