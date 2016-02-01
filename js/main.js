@@ -65,8 +65,11 @@ window.onload = function() {
         // This function returns the rotation angle that makes it visually match its
         // new trajectory.
         bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 500, 500, 500 );
-
-    bouncy1.x = game.input.mousePointer.x;
-    bouncy1.y = game.input.mousePointer.y;
+	
+	    bouncy1.x = game.input.mousePointer.x;
+	    bouncy1.y = game.input.mousePointer.y;
+	    
+	    game.physics.arcade.collide(bouncy, bouncy1);
+	    
     }
 };
