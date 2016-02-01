@@ -49,7 +49,7 @@ window.onload = function() {
         bouncy1.scale.setTo( .05, .05 );
 //        bouncy1.body.setCircle(3);
         
-        
+        bouncy.body.velocity.setTo(200,200);
 
         
         // Add some text using a CSS style.
@@ -65,7 +65,7 @@ window.onload = function() {
         // in X or Y.
         // This function returns the rotation angle that makes it visually match its
         // new trajectory.
-    	game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 200, 200, 200 );
+//    	game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 200, 200, 200 );
 	
 	    bouncy1.x = game.input.mousePointer.x;
 	    bouncy1.y = game.input.mousePointer.y;
