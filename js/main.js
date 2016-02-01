@@ -31,7 +31,7 @@ window.onload = function() {
         // Create a sprite at the center of the screen using the 'logo' image.
 //        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'logo' );
         bouncy1 = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
-        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
+        bouncy = game.add.sprite( game.world._height, game.world._width, 'bomb' );
 //        bouncy3 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
        // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
@@ -64,7 +64,7 @@ window.onload = function() {
         // in X or Y.
         // This function returns the rotation angle that makes it visually match its
         // new trajectory.
-        bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 500, 500, 500 );
+        bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 200, 200, 200 );
 	
 	    bouncy1.x = game.input.mousePointer.x;
 	    bouncy1.y = game.input.mousePointer.y;
