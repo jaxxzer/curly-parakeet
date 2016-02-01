@@ -23,6 +23,8 @@ window.onload = function() {
     }
     
     var bouncy;
+    var bouncy1;
+    var bouncy2;
     
     function create() {
         // Create a sprite at the center of the screen using the 'logo' image.
