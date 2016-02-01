@@ -26,7 +26,7 @@ window.onload = function() {
     
     function create() {
         // Create a sprite at the center of the screen using the 'logo' image.
-        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
+        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'logo' );
         bouncy1 = game.add.sprite( game.world.leftX, game.world.centerY, 'mario' );
         bouncy2 = game.add.sprite( game.world.centerX, game.world.centerY, 'lbomb' );
         bouncy3 = game.add.sprite( game.world.centerX, game.world.bottomY, 'bomb' );
