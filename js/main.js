@@ -25,7 +25,7 @@ window.onload = function() {
     var bouncy;
     var bouncy1;
     var text;
-    boolean loose = false;
+//    boolean loose = false;
     //var bouncy2;
     
     function create() {
