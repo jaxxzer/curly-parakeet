@@ -48,7 +48,7 @@ window.onload = function() {
         
         bouncy.scale.setTo( .1, .1 );
         bouncy1.scale.setTo( .05, .05 );
-        bouncy1.body.scale.setTo(0.25,0.25);
+        bouncy1.body.setSize(bouncy1.body.width *.5,bouncy1.body.height*.5);
 //        bouncy1.body.setCircle(3);
         
         bouncy.body.velocity.setTo(200,200);
