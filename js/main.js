@@ -83,7 +83,7 @@ window.onload = function() {
     }
     
     function updateText() {
-	    text.setText("Game Over!\nYou lasted: "+ " seconds!");
+	    text.setText("Game Over!\nYou lasted: " + 5 + " seconds!");
 
     	//text.setText("hello");
     	loose = true;
