@@ -13,13 +13,13 @@ window.onload = function() {
     
     "use strict";
     
-    var game = new Phaser.Game( 1200, 800, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
+    var game = new Phaser.Game( 800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update } );
     
     function preload() {
         // Load an image and call it 'logo'.
         game.load.image( 'logo', 'assets/phaser.png' );
-        game.load.image( 'bomb', 'assets/bomb.png' );
-        game.load.image( 'mario', 'assets/mario.png' );
+//        game.load.image( 'bomb', 'assets/bomb.png' );
+//        game.load.image( 'mario', 'assets/mario.png' );
     }
     
     var bouncy;
@@ -27,9 +27,9 @@ window.onload = function() {
     function create() {
         // Create a sprite at the center of the screen using the 'logo' image.
         bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'logo' );
-        bouncy1 = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
-        bouncy2 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
-        bouncy3 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
+//        bouncy1 = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
+//        bouncy2 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
+//        bouncy3 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
        // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
         bouncy.anchor.setTo( 0.5, 0.5 );
