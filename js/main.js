@@ -72,7 +72,7 @@ window.onload = function() {
 	    
 	    game.physics.arcade.overlap(bouncy, bouncy1, updateText);
 	    
-	    text.setText(String.format(this.game.time.totalElapsedSeconds().toFixed(2));
+	    text.setText(this.game.time.totalElapsedSeconds().toFixed(2));
     	//updateText();
     }
     
