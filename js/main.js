@@ -24,8 +24,8 @@ window.onload = function() {
     
     var bouncy;
     var bouncy1;
-    //var bouncy2;
     var text;
+    //var bouncy2;
     
     function create() {
         // Create a sprite at the center of the screen using the 'logo' image.
@@ -66,17 +66,7 @@ window.onload = function() {
         // new trajectory.
         bouncy.rotation = game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 500, 500, 500 );
 
-	    bouncy1.x = game.input.mousePointer.x;
-	    bouncy1.y = game.input.mousePointer.y;
-	    
-	//	game.physics.arcade.collide(bouncy, bouncy1, updateText, this);
-		if(game.physics.arcade.collide(bouncy, bouncy1)) {
-			updateText();
-		}
-    }
-    
-    fuction updateText() {
-    	text.setText("- You loose!");
-    	
+    bouncy1.x = game.input.mousePointer.x;
+    bouncy1.y = game.input.mousePointer.y;
     }
 };
