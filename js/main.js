@@ -82,6 +82,6 @@ window.onload = function() {
     function updateText() {
     	
     	text.setText("hello");
-    	loose = true;
+//    	loose = true;
     }
 };
