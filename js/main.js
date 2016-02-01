@@ -68,18 +68,20 @@ window.onload = function() {
         // This function returns the rotation angle that makes it visually match its
         // new trajectory.
 //    	game.physics.arcade.accelerateToPointer( bouncy, this.game.input.activePointer, 200, 200, 200 );
-	
-	    bouncy1.x = game.input.mousePointer.x;
-	    bouncy1.y = game.input.mousePointer.y;
-	    
-	    game.physics.arcade.overlap(bouncy, bouncy1, updateText);
-	    
-	    text.setText(this.game.time.totalElapsedSeconds().toFixed(2));
+		if(!loose) {
+		    bouncy1.x = game.input.mousePointer.x;
+		    bouncy1.y = game.input.mousePointer.y;
+		    
+		    game.physics.arcade.overlap(bouncy, bouncy1, updateText);
+		    
+		    text.setText(this.game.time.totalElapsedSeconds().toFixed(2));
+		}
     	//updateText();
     }
     
     function updateText() {
     	
     	text.setText("hello");
+    	loose = true;
     }
 };
