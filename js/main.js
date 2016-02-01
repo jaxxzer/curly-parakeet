@@ -27,6 +27,7 @@ window.onload = function() {
     var text;
     var loose = false;
     var enemySpeed = 1.0005;
+    var time;
     //var bouncy2;
     
     function create() {
@@ -73,14 +74,15 @@ window.onload = function() {
 		if(!loose) {
 		    bouncy1.x = game.input.mousePointer.x;
 		    bouncy1.y = game.input.mousePointer.y;
-		    text.setText(this.game.time.totalElapsedSeconds().toFixed(2));
+		    time = this.game.time.totalElapsedSeconds();
+		    text.setText(time.toFixed(2));
 
 		    game.physics.arcade.overlap(bouncy, bouncy1, updateText);
 	        bouncy.body.velocity.setTo(bouncy.body.velocity.x * enemySpeed, bouncy.body.velocity.y *enemySpeed);
 	        
 		    
 		} else {
-		    text.setText("Game Over!\nYou lasted: " + this.game.time.totalElapsedSeconds() + " seconds!");
+		    text.setText("Game Over!\nYou lasted: " + time.toFixed(2) + " seconds!");
 
 		}
     }
