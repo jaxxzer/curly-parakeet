@@ -26,7 +26,7 @@ window.onload = function() {
     var bouncy1;
     var text;
     var loose = false;
-    var enemySpeed = 1.01;
+    var enemySpeed = 1.001;
     //var bouncy2;
     
     function create() {
