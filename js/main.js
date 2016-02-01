@@ -69,8 +69,8 @@ window.onload = function() {
 	    bouncy1.x = game.input.mousePointer.x;
 	    bouncy1.y = game.input.mousePointer.y;
 	    
-	    //game.physics.arcade.collide(bouncy, bouncy1, updateText, this);
-    	text.setText("hello");
+	    game.physics.arcade.collide(bouncy, bouncy1, updateText);
+    	//updateText();
     }
     
     function updateText() {
