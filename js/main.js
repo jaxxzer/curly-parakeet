@@ -50,6 +50,7 @@ window.onload = function() {
 //        bouncy1.body.setCircle(3);
         
         bouncy.body.velocity.setTo(200,200);
+        bouncy.body.bounce.setTo(1,1);
 
         
         // Add some text using a CSS style.
