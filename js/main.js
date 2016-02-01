@@ -72,4 +72,9 @@ window.onload = function() {
 	    game.physics.arcade.collide(bouncy, bouncy1);
 	    
     }
+    
+    function updateText() {
+    	
+    	text.setText("hello");
+    }
 };
