@@ -25,6 +25,7 @@ window.onload = function() {
     var bouncy;
     var bouncy1;
     var bouncy2;
+    var bouncy3;
     var text;
     var loose = false;
     var enemySpeed = 1.0005;
@@ -37,24 +38,29 @@ window.onload = function() {
         bouncy1 = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
         bouncy = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
         bouncy2 = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
+        bouncy3 = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
+
         //        bouncy3 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
        // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
         bouncy.anchor.setTo( 0.5, 0.5 );
         bouncy1.anchor.setTo( 0.5, 0.5 );
         bouncy2.anchor.setTo( 0.5, 0.5 );
+        bouncy3.anchor.setTo( 0.5, 0.5 );
         // Turn on the arcade physics engine for this sprite.
         game.physics.enable( bouncy, Phaser.Physics.ARCADE );
         game.physics.enable( bouncy1, Phaser.Physics.ARCADE );     
         game.physics.enable( bouncy2, Phaser.Physics.ARCADE );
-        
+        game.physics.enable( bouncy3, Phaser.Physics.ARCADE );
         // Make it bounce off of the world bounds.
         bouncy.body.collideWorldBounds = true;
         bouncy1.body.collideWorldBounds = true;
         bouncy2.body.collideWorldBounds = true;
+        bouncy3.body.collideWorldBounds = true;
         
         bouncy.scale.setTo( .1, .1 );
         bouncy2.scale.setTo( .05, .05 );
+        bouncy3.scale.setTo( .05, .05 );
         bouncy1.scale.setTo( .05, .05 );
         bouncy1.body.setSize(bouncy1.body.width *.1, bouncy1.body.height*.1);
 //        bouncy1.body.setCircle(3);
@@ -65,6 +71,8 @@ window.onload = function() {
         bouncy2.body.velocity.setTo(300,300);
         bouncy2.body.bounce.setTo(1,1);
 
+        bouncy3.body.velocity.setTo(300,300);
+        bouncy3.body.bounce.setTo(1,1);
         
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
@@ -89,6 +97,7 @@ window.onload = function() {
 		    game.physics.arcade.overlap(bouncy1, [bouncy, bouncy2], updateText);
 	        bouncy.body.velocity.setTo(bouncy.body.velocity.x * enemySpeed, bouncy.body.velocity.y *enemySpeed);
 	        bouncy2.body.velocity.setTo(bouncy2.body.velocity.x * enemySpeed, bouncy2.body.velocity.y *enemySpeed);
+	        bouncy3.body.velocity.setTo(bouncy3.body.velocity.x * enemySpeed, bouncy3.body.velocity.y *enemySpeed);
 
 		    
 		}
