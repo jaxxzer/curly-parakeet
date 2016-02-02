@@ -24,6 +24,7 @@ window.onload = function() {
     
     var bouncy;
     var bouncy1;
+    var bouncy2;
     var text;
     var loose = false;
     var enemySpeed = 1.0005;
