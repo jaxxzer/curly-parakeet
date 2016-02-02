@@ -34,7 +34,7 @@ window.onload = function() {
         // Create a sprite at the center of the screen using the 'logo' image.
 //        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'logo' );
         bouncy1 = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
-        bouncy = game.add.sprite( game.world._width, game.world._height, 'bomb' );
+        bouncy = game.add.sprite( game.world._width * game.rand.frac(), game.world._height * game.rand.frac(), 'bomb' );
 //        bouncy3 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
        // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
@@ -53,7 +53,7 @@ window.onload = function() {
         bouncy1.body.setSize(bouncy1.body.width *.1, bouncy1.body.height*.1);
 //        bouncy1.body.setCircle(3);
         
-        bouncy.body.velocity.setTo(200,210);
+        bouncy.body.velocity.setTo(200,200);
         bouncy.body.bounce.setTo(1,1);
 
         
@@ -85,7 +85,9 @@ window.onload = function() {
     }
     
     function updateText() {
-	    text.setText("Game Over!\nYou lasted: " + time.toFixed(2) + " seconds!");
-    	loose = true;
+    	if(time > 3.0) {//give some time to start, so you dont die immediately if enemy spawns on top of you
+		    text.setText("Game Over!\nYou lasted: " + time.toFixed(2) + " seconds!");
+	    	loose = true;
+    	}
     }
 };
