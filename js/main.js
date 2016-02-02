@@ -71,7 +71,7 @@ window.onload = function() {
         bouncy2.body.velocity.setTo(300,300);
         bouncy2.body.bounce.setTo(1,1);
 
-        bouncy3.body.velocity.setTo(300,300);
+        bouncy3.body.velocity.setTo(310,270);
         bouncy3.body.bounce.setTo(1,1);
         
         // Add some text using a CSS style.
