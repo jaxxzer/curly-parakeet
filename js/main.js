@@ -34,7 +34,7 @@ window.onload = function() {
         // Create a sprite at the center of the screen using the 'logo' image.
 //        bouncy = game.add.sprite( game.world.centerX, game.world.centerY, 'logo' );
         bouncy1 = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
-        bouncy = game.add.sprite( game.world._width * game.rand.frac(), game.world._height * game.rand.frac(), 'bomb' );
+        bouncy = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
 //        bouncy3 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
        // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
