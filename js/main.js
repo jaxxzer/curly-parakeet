@@ -94,7 +94,7 @@ window.onload = function() {
 		    time = this.game.time.totalElapsedSeconds();
 		    text.setText(time.toFixed(2));
 
-		    game.physics.arcade.overlap(bouncy1, [bouncy, bouncy2], updateText);
+		    game.physics.arcade.overlap(bouncy1, [bouncy, bouncy2, bouncy3], updateText);
 	        bouncy.body.velocity.setTo(bouncy.body.velocity.x * enemySpeed, bouncy.body.velocity.y *enemySpeed);
 	        bouncy2.body.velocity.setTo(bouncy2.body.velocity.x * enemySpeed, bouncy2.body.velocity.y *enemySpeed);
 	        bouncy3.body.velocity.setTo(bouncy3.body.velocity.x * enemySpeed, bouncy3.body.velocity.y *enemySpeed);
