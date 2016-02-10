@@ -36,7 +36,7 @@ window.onload = function() {
     	sound = game.add.audio('gunshot');
     	sound.allowMultiple = true;
     	
-    	sound.addMarker('gun', 0.4, 0.5);
+    	sound.addMarker('gun', 1.1, 0.5);
     	
         // Create a sprite at the center of the screen using the 'logo' image.
         player = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
