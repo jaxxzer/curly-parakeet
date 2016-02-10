@@ -33,10 +33,10 @@ window.onload = function() {
     
     function create() {
     	
+    	// Create sound sprite
     	sound = game.add.audio('gunshot');
     	sound.allowMultiple = true;
-    	
-    	sound.addMarker('gun', 1.1, 0.5);
+    	sound.addMarker('gun', 1.1, 1.0);
     	
         // Create a sprite at the center of the screen using the 'logo' image.
         player = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
@@ -101,6 +101,7 @@ window.onload = function() {
 		    //check collision between mario and the enemies
 		    game.physics.arcade.overlap(player, [enemy1, enemy2, enemy3], updateText);
 	       
+		    // Check collision with world bounds for enemies and play sound
 		    if(enemy1.body.blocked.up || enemy1.body.blocked.down || enemy1.body.blocked.left || enemy1.body.blocked.right) { 
 		    	sound.play('gun');
 	    	}
