@@ -33,7 +33,7 @@ window.onload = function() {
     
     function create() {
     	
-    	sound = game.add.sound('gunshot');
+    	sound = game.add.audio('gunshot');
     	sound.allowmultiple = true;
     	
     	sound.addmarker('gun', 0.0, 1.5);
