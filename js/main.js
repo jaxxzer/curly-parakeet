@@ -36,7 +36,7 @@ window.onload = function() {
     	sound = game.add.audio('gunshot');
     	sound.allowMultiple = true;
     	
-    	sound.addMarker('gun', 0.0, 1.5);
+    	sound.addMarker('gun', 0.1, .5);
     	
         // Create a sprite at the center of the screen using the 'logo' image.
         player = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
@@ -102,6 +102,12 @@ window.onload = function() {
 		    game.physics.arcade.overlap(player, [enemy1, enemy2, enemy3], updateText);
 	       
 		    if(enemy1.body.blocked.up || enemy1.body.blocked.down || enemy1.body.blocked.left || enemy1.body.blocked.right) { 
+		    	sound.play('gun');
+	    	}
+		    if(enemy2.body.blocked.up || enemy2.body.blocked.down || enemy2.body.blocked.left || enemy2.body.blocked.right) { 
+		    	sound.play('gun');
+	    	}
+		    if(enemy3.body.blocked.up || enemy3.body.blocked.down || enemy3.body.blocked.left || enemy3.body.blocked.right) { 
 		    	sound.play('gun');
 	    	}
 		    
