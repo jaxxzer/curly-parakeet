@@ -18,6 +18,7 @@ window.onload = function() {
     function preload() {
         game.load.image( 'bomb', 'assets/bomb.png' );
         game.load.image( 'mario', 'assets/mario.png' );
+        game.load.audio( 'gunshot', 'assets/gunshot.ogg');
     }
     
     var player;
@@ -28,18 +29,22 @@ window.onload = function() {
     var loose = false;
     var enemySpeed = 1.0005;
     var time;
-    //var enemy2;
+    var sound;
     
     function create() {
+    	
+    	sound = game.add.sound('gunshot');
+    	sound.allowmultiple = true;
+    	
+    	sound.addmarker('gun', 0.0, 1.5);
+    	
         // Create a sprite at the center of the screen using the 'logo' image.
-//        enemy = game.add.sprite( game.world.centerX, game.world.centerY, 'logo' );
         player = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
         enemy1 = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
         enemy2 = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
         enemy3 = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
 
-        //        enemy3 = game.add.sprite( game.world.centerX, game.world.centerY, 'bomb' );
-       // Anchor the sprite at its center, as opposed to its top-left corner.
+        // Anchor the sprite at its center, as opposed to its top-left corner.
         // so it will be truly centered.
         player.anchor.setTo( 0.5, 0.5 );
         enemy1.anchor.setTo( 0.5, 0.5 );
@@ -58,10 +63,13 @@ window.onload = function() {
         enemy2.body.collideWorldBounds = true;
         enemy3.body.collideWorldBounds = true;
         
+        // Adjust size of the sprites
         enemy1.scale.setTo( .1, .1 );
         enemy2.scale.setTo( .05, .05 );
         enemy3.scale.setTo( .05, .05 );
         player.scale.setTo( .05, .05 );
+        
+        // Adjust size of physics body for mario, so enemy has to actually pass through center of image to collide
         player.body.setSize(player.body.width *.1, player.body.height*.1);
         
         enemy1.body.velocity.setTo(200,200);
@@ -81,24 +89,26 @@ window.onload = function() {
     }
     
     function update() {
-        // Accelerate the 'logo' sprite towards the cursor,
-        // accelerating at 500 pixels/second and moving no faster than 500 pixels/second
-        // in X or Y.
-        // This function returns the rotation angle that makes it visually match its
-        // new trajectory.
-//    	game.physics.arcade.accelerateToPointer( enemy, this.game.input.activePointer, 200, 200, 200 );
 		if(!loose) {
+			//Make mario follow the mouse
 		    player.x = game.input.mousePointer.x;
 		    player.y = game.input.mousePointer.y;
+		    
+		    //update timer display
 		    time = this.game.time.totalElapsedSeconds();
 		    text.setText(time.toFixed(2));
 
+		    //check collision between mario and the enemies
 		    game.physics.arcade.overlap(player, [enemy1, enemy2, enemy3], updateText);
-	        enemy1.body.velocity.setTo(enemy1.body.velocity.x * enemySpeed, enemy1.body.velocity.y *enemySpeed);
-	        enemy2.body.velocity.setTo(enemy2.body.velocity.x * enemySpeed, enemy2.body.velocity.y *enemySpeed);
-	        enemy3.body.velocity.setTo(enemy3.body.velocity.x * enemySpeed, enemy3.body.velocity.y *enemySpeed);
-
+	       
+		    if(enemy1.body.blocked.up || enemy1.body.blocked.down || enemy1.body.blocked.left || enemy1.body.blocked.right) { 
+		    	sound.play('gun');
+	    	}
 		    
+		    //Speed up enemies
+		    enemy1.body.velocity.setTo(enemy1.body.velocity.x * enemySpeed, enemy1.body.velocity.y *enemySpeed);
+	        enemy2.body.velocity.setTo(enemy2.body.velocity.x * enemySpeed, enemy2.body.velocity.y *enemySpeed);
+	        enemy3.body.velocity.setTo(enemy3.body.velocity.x * enemySpeed, enemy3.body.velocity.y *enemySpeed);    
 		}
     }
     
@@ -106,6 +116,7 @@ window.onload = function() {
     	if(time > 3.0) {//give some time to start, so you dont die immediately if enemy spawns on top of you
 		    text.setText("Game Over!\nYou lasted: " + time.toFixed(2) + " seconds!");
 	    	loose = true;
+	    	sound.play('gun');
     	}
     }
 };
