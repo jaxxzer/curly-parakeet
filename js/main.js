@@ -32,54 +32,24 @@ window.onload = function() {
     var sound;
     
     function create() {
-    	
+        game.physics.startSystem(Phaser.Physics.P2JS);
     	// Create sound sprite
     	sound = game.add.audio('gunshot');
     	sound.allowMultiple = true;
     	sound.addMarker('gun', 1.1, 1.0);
     	
         // Create a sprite at the center of the screen using the 'logo' image.
-        player = game.add.sprite( game.world.centerX, game.world.centerY, 'mario' );
-        enemy1 = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
-        enemy2 = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
-        enemy3 = game.add.sprite( game.world._width * game.rnd.frac(), game.world._height * game.rnd.frac(), 'bomb' );
-
-        // Anchor the sprite at its center, as opposed to its top-left corner.
-        // so it will be truly centered.
-        player.anchor.setTo( 0.5, 0.5 );
-        enemy1.anchor.setTo( 0.5, 0.5 );
-        enemy2.anchor.setTo( 0.5, 0.5 );
-        enemy3.anchor.setTo( 0.5, 0.5 );
-        
+        player = game.add.sprite(game.world.centerX, game.world.centerY, 'mario' );
+        enemy1 = game.add.sprite(game.world.centerX, game.world._height/4, 'bomb' );
+         // Adjust size of the sprites
+        enemy1.scale.setTo(.01, .01);
+        player.scale.setTo(.05, .05);
         // Turn on the arcade physics engine for this sprite.
-        game.physics.enable( player, Phaser.Physics.ARCADE ); 
-        game.physics.enable( enemy1, Phaser.Physics.ARCADE );    
-        game.physics.enable( enemy2, Phaser.Physics.ARCADE );
-        game.physics.enable( enemy3, Phaser.Physics.ARCADE );
-        
-        // Make it bounce off of the world bounds.
-        player.body.collideWorldBounds = true;
-        enemy1.body.collideWorldBounds = true;
-        enemy2.body.collideWorldBounds = true;
-        enemy3.body.collideWorldBounds = true;
-        
-        // Adjust size of the sprites
-        enemy1.scale.setTo( .1, .1 );
-        enemy2.scale.setTo( .05, .05 );
-        enemy3.scale.setTo( .05, .05 );
-        player.scale.setTo( .05, .05 );
-        
-        // Adjust size of physics body for mario, so enemy has to actually pass through center of image to collide
-        player.body.setSize(player.body.width *.1, player.body.height*.1);
-        
-        enemy1.body.velocity.setTo(200,200);
-        enemy1.body.bounce.setTo(1,1);
-        
-        enemy2.body.velocity.setTo(300,300);
-        enemy2.body.bounce.setTo(1,1);
-
-        enemy3.body.velocity.setTo(310,270);
-        enemy3.body.bounce.setTo(1,1);
+        game.physics.p2.enable(player); 
+        game.physics.p2.enable(enemy1); 
+        player.body.setCircle(16);
+    
+        enemy1.body.velocity.x = 130;
         
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
@@ -89,35 +59,19 @@ window.onload = function() {
     }
     
     function update() {
-		if(!loose) {
-			//Make mario follow the mouse
-		    player.x = game.input.mousePointer.x;
-		    player.y = game.input.mousePointer.y;
-		    
-		    //update timer display
-		    time = this.game.time.totalElapsedSeconds();
-		    text.setText(time.toFixed(2));
 
-		    //check collision between mario and the enemies
-		    game.physics.arcade.overlap(player, [enemy1, enemy2, enemy3], updateText);
-	       
-		    // Check collision with world bounds for enemies and play sound
-		    if(enemy1.body.blocked.up || enemy1.body.blocked.down || enemy1.body.blocked.left || enemy1.body.blocked.right) { 
-		    	sound.play('gun');
-	    	}
-		    if(enemy2.body.blocked.up || enemy2.body.blocked.down || enemy2.body.blocked.left || enemy2.body.blocked.right) { 
-		    	sound.play('gun');
-	    	}
-		    if(enemy3.body.blocked.up || enemy3.body.blocked.down || enemy3.body.blocked.left || enemy3.body.blocked.right) { 
-		    	sound.play('gun');
-	    	}
-		    
-		    //Speed up enemies
-		    enemy1.body.velocity.setTo(enemy1.body.velocity.x * enemySpeed, enemy1.body.velocity.y *enemySpeed);
-	        enemy2.body.velocity.setTo(enemy2.body.velocity.x * enemySpeed, enemy2.body.velocity.y *enemySpeed);
-	        enemy3.body.velocity.setTo(enemy3.body.velocity.x * enemySpeed, enemy3.body.velocity.y *enemySpeed);    
-		}
+
+            
+        var distance = get_distance(enemy1, player);
+        var angle = get_angle(enemy1, player);
+        var gravity = 2000/distance;
+        enemy1.body.force.x = Math.cos(angle)* gravity;    // accelerateToObject 
+        enemy1.body.force.y = Math.sin(angle) * gravity;
+        player.body.force.x = -Math.cos(angle)* gravity;    // accelerateToObject 
+        player.body.force.y = -Math.sin(angle) * gravity; 
+		
     }
+    
     
     function updateText() {
     	if(time > 3.0) {//give some time to start, so you dont die immediately if enemy spawns on top of you
@@ -125,5 +79,14 @@ window.onload = function() {
 	    	loose = true;
 	    	sound.play('gun');
     	}
+    }
+    
+    
+    function get_angle(object1, object2) {
+        return Math.atan2(object2.y - object1.y, object2.x - object1.x);
+    }
+    
+    function get_distance(object1, object2) {
+        return Math.sqrt(((object2.x - object1.x) * (object2.x - object1.x)) +((object2.y - object1.y) *  (object2.y - object1.y)));
     }
 };
