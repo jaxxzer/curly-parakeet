@@ -30,6 +30,7 @@ window.onload = function() {
     var enemySpeed = 1.0005;
     var time;
     var sound;
+    var G = 2000.0; // Gravitational constant
     
     function create() {
         game.physics.startSystem(Phaser.Physics.P2JS);
@@ -51,6 +52,11 @@ window.onload = function() {
     
         enemy1.body.velocity.x = 130;
         
+        player.body.mass = 10.0;
+        enemy1.body.mass = 0.5;
+        
+        
+        
         // Add some text using a CSS style.
         // Center it in X, and position its top 15 pixels from the top of the world.
         var style = { font: "25px Verdana", fill: "#9999ff", align: "center" };
@@ -64,11 +70,11 @@ window.onload = function() {
             
         var distance = get_distance(enemy1, player);
         var angle = get_angle(enemy1, player);
-        var gravity = 2000/distance;
-        enemy1.body.force.x = Math.cos(angle)* gravity;    // accelerateToObject 
-        enemy1.body.force.y = Math.sin(angle) * gravity;
-        player.body.force.x = -Math.cos(angle)* gravity;    // accelerateToObject 
-        player.body.force.y = -Math.sin(angle) * gravity; 
+        var mass_product = get_mass_product(enemy1, player);
+        enemy1.body.force.x = G * mass_product * Math.cos(angle) / distance;    // accelerateToObject 
+        enemy1.body.force.y = G * mass_product * Math.sin(angle) / distance;
+        player.body.force.x = G * mass_product * -Math.cos(angle) / distance;    // accelerateToObject 
+        player.body.force.y = G * mass_product * -Math.sin(angle) / distance; 
 		
     }
     
@@ -88,5 +94,9 @@ window.onload = function() {
     
     function get_distance(object1, object2) {
         return Math.sqrt(((object2.x - object1.x) * (object2.x - object1.x)) +((object2.y - object1.y) *  (object2.y - object1.y)));
+    }
+    
+    function get_mass_product(object1, object2) {
+        return object1.body.mass * object2.body.mass;
     }
 };
