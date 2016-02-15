@@ -30,30 +30,41 @@ window.onload = function() {
     var enemySpeed = 1.0005;
     var time;
     var sound;
-    var G = 2000.0; // Gravitational constant
+    var G = 10.0; // Gravitational constant
+    var masses;
+    var accel_max = 0.05;
+    var force_max = 10.0;
     
     function create() {
         game.physics.startSystem(Phaser.Physics.P2JS);
     	// Create sound sprite
-    	sound = game.add.audio('gunshot');
-    	sound.allowMultiple = true;
-    	sound.addMarker('gun', 1.1, 1.0);
+//    	sound = game.add.audio('gunshot');
+//    	sound.allowMultiple = true;
+//    	sound.addMarker('gun', 1.1, 1.0);
     	
-        // Create a sprite at the center of the screen using the 'logo' image.
-        player = game.add.sprite(game.world.centerX, game.world.centerY, 'mario' );
-        enemy1 = game.add.sprite(game.world.centerX, game.world._height/4, 'bomb' );
-         // Adjust size of the sprites
-        enemy1.scale.setTo(.01, .01);
-        player.scale.setTo(.05, .05);
-        // Turn on the arcade physics engine for this sprite.
-        game.physics.p2.enable(player); 
-        game.physics.p2.enable(enemy1); 
-        player.body.setCircle(16);
-    
-        enemy1.body.velocity.x = 130;
+        masses = game.add.group();
         
-        player.body.mass = 10.0;
-        enemy1.body.mass = 0.5;
+        
+        // Create a sprite at the center of the screen using the 'logo' image.
+        player = masses.create(100, game.world.centerY, 'mario' );
+        for (var i = 0; i < 100; i++) {
+            var mass = masses.create(game.rnd.integerInRange(0,800), game.rnd.integerInRange(0,800), 'bomb');
+            mass.scale.setTo(0.005,0.005);
+            game.physics.p2.enable(mass);
+            mass.body.setCircle(2);
+            mass.body.mass = 0.001;
+        }
+
+        
+         // Adjust size of the sprites
+        player.scale.setTo(.01, .01);
+        // Turn on the arcade physics engine for this sprite.
+        game.physics.p2.enable(player);  
+        player.body.setCircle(10);
+    
+        
+        player.body.mass = 80.0;
+
         
         
         
@@ -65,38 +76,95 @@ window.onload = function() {
     }
     
     function update() {
-
-
-            
-        var distance = get_distance(enemy1, player);
-        var angle = get_angle(enemy1, player);
-        var mass_product = get_mass_product(enemy1, player);
-        enemy1.body.force.x = G * mass_product * Math.cos(angle) / distance;    // accelerateToObject 
-        enemy1.body.force.y = G * mass_product * Math.sin(angle) / distance;
-        player.body.force.x = G * mass_product * -Math.cos(angle) / distance;    // accelerateToObject 
-        player.body.force.y = G * mass_product * -Math.sin(angle) / distance; 
-		
+        player.body.x = game.input.mousePointer.x;
+        player.body.y = game.input.mousePointer.y;
+        apply_forces(masses);
     }
-    
-    
-    function updateText() {
-    	if(time > 3.0) {//give some time to start, so you dont die immediately if enemy spawns on top of you
-		    text.setText("Game Over!\nYou lasted: " + time.toFixed(2) + " seconds!");
-	    	loose = true;
-	    	sound.play('gun');
-    	}
-    }
-    
     
     function get_angle(object1, object2) {
         return Math.atan2(object2.y - object1.y, object2.x - object1.x);
     }
     
-    function get_distance(object1, object2) {
-        return Math.sqrt(((object2.x - object1.x) * (object2.x - object1.x)) +((object2.y - object1.y) *  (object2.y - object1.y)));
+    function get_r2(object1, object2) {
+        return ((object2.x - object1.x) * (object2.x - object1.x)) + ((object2.y - object1.y) *  (object2.y - object1.y));
     }
     
-    function get_mass_product(object1, object2) {
-        return object1.body.mass * object2.body.mass;
+    function apply_forces(group) {
+        var mass_product_sum = get_product_sum(group);  
+        var mass_sum = get_mass_sum(group);
+
+        
+        // F = G * m1m2/r^2
+        
+        group.forEachAlive(function(item) {
+            
+            var com_x = (mass_product_sum.x - (item.body.mass * item.x)) / (mass_sum - item.body.mass);
+            var com_y = (mass_product_sum.y - (item.body.mass * item.y)) / (mass_sum - item.body.mass);
+            
+            
+            
+            var angle = get_angle(item, {"x":com_x, "y":com_y});
+            var r2 = get_r2(item, {"x":com_x, "y":com_y});
+            
+            item.body.force.x = (G * Math.cos(angle) * mass_product_sum.x / r2);
+            item.body.force.y = (G * Math.sin(angle) * mass_product_sum.y / r2);
+            constrain_force(item);
+        });
+        
+    
+    }
+    
+    function get_mass_sum(group) {
+        var sum = 0.0;
+        group.forEachAlive(function(item) {
+            sum += item.body.mass;
+        });
+        return sum;
+    } 
+    
+    function get_product_sum(group) {
+        var sum_x = 0.0;
+        var sum_y = 0.0;
+        group.forEachAlive(function(item) {
+            sum_x += item.body.mass * item.x;
+            sum_y += item.body.mass * item.y;
+        });
+        
+        return {"x" : sum_x, "y" : sum_y};
+    }
+    
+    function constrain_acceleration(object) {
+        var accel_x = object.body.force.x/object.body.mass;
+        var accel_y = object.body.force.y/object.body.mass;
+        
+        if(accel_x > accel_max) {
+            object.body.force.x = accel_max * object.body.mass;
+        } else if (accel_x < -accel_max) {
+            object.body.force.x = -accel_max * object.body.mass;
+        }
+        
+        if(accel_y > accel_max) {
+            object.body.force.y = accel_max * object.body.mass;
+        } else if (accel_x < -accel_max) {
+            object.body.force.y = -accel_max * object.body.mass;
+        }
+        
+    }
+    
+    function constrain_force(object) {
+        var force_x = object.body.force.x;
+        var force_y = object.body.force.y;
+        
+        if(force_x > force_max) {
+            object.body.force.x = force_max;
+        } else if(force_x < -force_max) {
+            object.body.force.x = -force_max;
+        }
+        
+        if(force_y > force_max) {
+            object.body.force.y = force_max;
+        } else if(force_y < -force_max) {
+            object.body.force.y = -force_max;
+        }
     }
 };
