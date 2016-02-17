@@ -33,7 +33,7 @@ window.onload = function() {
     var sound;
     var G = 1.0; // Gravitational constant
     var masses;
-    var accel_max = 100.0;
+    var accel_max = 200.0;
     var force_max = 0.1;
     
     var circle;
@@ -90,7 +90,7 @@ window.onload = function() {
         spin = player.animations.add('spin');
         player.animations.play('spin', 15, true);
         
-        for (var i = 0; i < 200; i++) {
+        for (var i = 0; i < 1000; i++) {
             mass = masses.create(game.rnd.integerInRange(0,game.world.width), game.rnd.integerInRange(0,game.world.height), 'asteroid');
             game.physics.p2.enable(mass);
             mass.body.density = enemyDensity;
@@ -206,7 +206,7 @@ window.onload = function() {
         // Enemy types might be asteroids, planets, moons, stars, comets, dust, or black holes
         // The likleyhood of each type of enemy spawning could be set to tune gameplay experience
         //
-        sprite.body.mass = game.rnd.frac() * player.body.mass/1000.0;
+        sprite.body.mass = game.rnd.frac() * player.body.mass/100.0;
         updateSize(sprite);
         
     }
