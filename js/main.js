@@ -19,6 +19,7 @@ window.onload = function() {
         game.load.image( 'bomb', 'assets/bomb.png' );
         game.load.image( 'mario', 'assets/mario.png' );
         game.load.audio( 'gunshot', 'assets/gunshot.ogg');
+        game.load.spritesheet('asteroid', 'assets/asteroid_sprite_sheet.png', 128, 128, 32);
     }
     
     var player;
@@ -30,7 +31,7 @@ window.onload = function() {
     var enemySpeed = 1.0005;
     var time;
     var sound;
-    var G = 0.1; // Gravitational constant
+    var G = 1.0; // Gravitational constant
     var masses;
     var accel_max = 100.0;
     var force_max = 0.1;
@@ -40,12 +41,22 @@ window.onload = function() {
     var massCollisionGroup;
     var mass;
     
-    var enemyDensity = .01;
-    var playerDensity = 100;
+    var enemyDensity = 1;
+    var playerDensity = 1;
+    
+    var playerStartMass = .1;
+    var enemyStartMass = .01;
+    
+    var asteroid;
+    var spin;
 //    var playerDensity = 1000;
     
     function create() {
-        game.world.setBounds(0, 0, 5000,5000);
+//        asteroid = game.add.sprite(200, 200, 'asteroid');
+//        spin = asteroid.animations.add('spin');
+//        asteroid.animations.play('spin', 10, true);
+        
+        game.world.setBounds(0, 0, 1500,1500);
         game.physics.startSystem(Phaser.Physics.P2JS);
     	// Create sound sprite
 //    	sound = game.add.audio('gunshot');
@@ -58,37 +69,44 @@ window.onload = function() {
         masses = game.add.group();
         
         // Create a sprite at the center of the screen using the 'logo' image.
-        player = masses.create(game.world.centerX, game.world.centerY, 'bomb' );
-                    game.camera.follow(player);
-            game.camera.deadzone = new Phaser.Rectangle(100, 100, 800, 400);
+        player = masses.create(game.world.centerX, game.world.centerY, 'asteroid' );
+        game.camera.follow(player);
+        game.camera.deadzone = new Phaser.Rectangle(100, 100, 800, 400);
         
         game.physics.p2.enable(player); 
 
                 
-        player.body.mass = 1.0;
+        player.body.mass = playerStartMass;
         player.body.density = playerDensity;
         // Adjust size of the sprites
-        player.scale.setTo(player.body.mass/playerDensity);
-        player.body.setCircle(player.height *.6);
-        // Turn on the arcade physics engine for this sprite.
-        player.body.setCollisionGroup(massCollisionGroup);
+        updateSize(player);
+//        player.scale.setTo(player.body.mass/playerDensity);
+//        player.body.setCircle(player.height *.6);
+//        // Turn on the arcade physics engine for this sprite.
+//        player.body.setCollisionGroup(massCollisionGroup);
         player.body.collides(massCollisionGroup);
         player.body.createGroupCallback(massCollisionGroup, absorb, this);
         player.body.debug = true;
+        spin = player.animations.add('spin');
+        player.animations.play('spin', 15, true);
         
-        for (var i = 0; i < 2000; i++) {
-            mass = masses.create(game.rnd.integerInRange(0,game.world.width), game.rnd.integerInRange(0,game.world.height), 'bomb');
+        for (var i = 0; i < 200; i++) {
+            mass = masses.create(game.rnd.integerInRange(0,game.world.width), game.rnd.integerInRange(0,game.world.height), 'asteroid');
             game.physics.p2.enable(mass);
             mass.body.density = enemyDensity;
-            if (i % 30 == 0) {
-                mass.body.mass = player.body.mass/3000;
+//            if (i % 30 == 0) {
+//                mass.body.mass = player.body.mass/100;
+////                mass.body.mass = 0.1
+//            } else {
+//                mass.body.mass = player.body.mass/10;
 //                mass.body.mass = 0.1
-            } else {
-                mass.body.mass = player.body.mass/10000;
-//                mass.body.mass = 0.1
-            }
+//            }
+            newEnemy(mass);
             
-            updateSize(mass);
+            spin = mass.animations.add('spin');
+            mass.animations.play('spin', game.rnd.integerInRange(5,25), true);
+            
+//            updateSize(mass);
 //            mass.body.setCollisionGroup(massCollisionGroup);
             mass.body.collides(massCollisionGroup);
             
@@ -117,12 +135,22 @@ window.onload = function() {
         game.debug.body(player);
            var zone = game.camera.deadzone;
 
-    game.context.fillStyle = 'rgba(255,0,0,0.6)';
-    game.context.fillRect(zone.x, zone.y, zone.width, zone.height);
+//    game.context.fillStyle = 'rgba(255,0,0,0.6)';
+//    game.context.fillRect(zone.x, zone.y, zone.width, zone.height);
 
     game.debug.cameraInfo(game.camera, 32, 32);
 //        game.debug.bodyInfo(playerbody.debugBody, 32, 32);
     }
+    function debugGame () {
+        text.setText("\
+                        player.mass: " 
+                    + player.body.mass.toFixed(4)
+                    + "\nplayer.radius: "
+                    + player.height/2);
+        text.x = game.camera.x + text.width;
+        text.y = game.camera.y + game.camera.height - text.height;
+    }
+    
     
     function absorb(body1, body2) {
         body1.mass += body2.mass;
@@ -134,8 +162,9 @@ window.onload = function() {
     }
     
     function updateSize(sprite) {
-        sprite.scale.setTo(sprite.body.mass/sprite.body.density);
-        sprite.body.setCircle(sprite.height);
+        sprite.scale.setTo(Math.cbrt(sprite.body.mass/sprite.body.density));
+//        sprite.scale.setTo(Math.sqrt(sprite.body.mass/sprite.body.density));
+        sprite.body.setCircle(sprite.height/3);
         sprite.body.setCollisionGroup(massCollisionGroup);
     }
     
@@ -161,16 +190,26 @@ window.onload = function() {
                 newY = game.rnd.integerInRange(-100, game.world.height + 100);
                 
         }
-        text.setText("w: " + game.world.width + " h: " + game.world.height + "\nnewX: " + newX + " newY: " + newY);
+//        text.setText("w: " + game.world.width + " h: " + game.world.height + "\nnewX: " + newX + " newY: " + newY);
  
         
         body.reset(newX, newY);
         //body.inView = false;
-        body.mass = game.rnd.frac() * player.body.mass /10000;
-        updateSize(body.sprite);
+        
+//        body.mass = game.rnd.frac() * player.body.mass /100;
+//        updateSize(body.sprite);
+        
+        newEnemy(body.sprite);
         
     }
-    
+    function newEnemy(sprite) { // This will spawn new enemies according to the context of the game
+        // Enemy types might be asteroids, planets, moons, stars, comets, dust, or black holes
+        // The likleyhood of each type of enemy spawning could be set to tune gameplay experience
+        //
+        sprite.body.mass = game.rnd.frac() * player.body.mass/1000.0;
+        updateSize(sprite);
+        
+    }
     
     
     function update() {
@@ -179,6 +218,7 @@ window.onload = function() {
         
 //        player.body.force.x = 
         apply_forces(masses);
+        debugGame();
 //        text.setText("Mass: " + player.body.mass.toFixed(6));
 //                text.setText("InView: " + mass.body.inView);
 
