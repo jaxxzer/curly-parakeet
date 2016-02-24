@@ -43,7 +43,12 @@ window.onload = function() {
     var spin;
     var sound;
     
+    var score = 0;
+    
     var cursors;
+    var ballsRemaining = 10;
+    
+    //var bucket;
     
     var pegGameState = 0;
     
@@ -53,6 +58,7 @@ window.onload = function() {
     	sound.allowMultiple = true;
     	sound.addMarker('blip', 0.0, 1.0);
         
+        
         // Set the playable area
         game.world.setBounds(0, 0, 1000, 1000);
         
@@ -61,35 +67,28 @@ window.onload = function() {
         // How much of the ball's velocity is recovered after a collision
         game.physics.p2.restitution = 0.8;
         
-        //Create new CollisionGroup for the masses
+        
+        var bucketCollisionGroup = game.physics.p2.createCollisionGroup();
+        var ballCollisionGroup = game.physics.p2.createCollisionGroup();
     	pegCollisionGroup = game.physics.p2.createCollisionGroup();
         game.physics.p2.updateBoundsCollisionGroup(); // So sprites will still collide with world bounds
         game.physics.p2.setImpactEvents(true);
         
-        // All masses are a part of this group
         pegs = game.add.group();
         
 
-
-        // Enable collisions between the player and children of massCollisionGroup
-        //player.body.collides(pegCollisionGroup);
-        
-
-        
-//        player.body.debug = true; // Will show the P2 physics body
-        
         var radius, numPegs;
         var angle, peg;
         for (var i = 0; i < numRings; i++) {
             radius = i * spacing + centerOffset;
-            var numPegs = (i + 1) * 8 + (i * .5);
+            var numPegs = Math.floor(((i + 1) * 8 + (i * .5)));
             //numPegs = 10;
             for (var j = 0; j < numPegs; j++) {
-                angle = j * 2 * Math.PI/numPegs;
+                angle = (j * 2 * Math.PI/numPegs) + 0.1 * i;
                 var peg = pegs.create(0, 0, 'peg');
 //                peg = game.add.sprite( 0 , 0, 'peg');
                 //peg.scale.setTo(0.1, 0.1);
-                
+                peg.anchor.setTo(0.5, 0.5);
                 peg.scale.setTo(0.02);
 
                 
@@ -98,7 +97,7 @@ window.onload = function() {
                 peg.body.x = game.world.centerX + radius * (Math.cos(angle));
                 peg.body.y = game.world.centerY + radius * (Math.sin(angle));
                 peg.body.setCollisionGroup(pegCollisionGroup);
-                peg.body.collides(pegCollisionGroup);
+                peg.body.collides(ballCollisionGroup);
                 peg.body.static = true;
                 
                 //pegCollisionGroup.add(peg);
@@ -119,7 +118,7 @@ window.onload = function() {
         
         
         playBall = game.add.sprite(0,0, 'peg');
-        playBall.scale.setTo(0.03);
+        playBall.scale.setTo(0.07);
         playBall.anchor.setTo(0.5,0.5);
         
 
@@ -129,12 +128,13 @@ window.onload = function() {
         
         playBall.body.damping = 0;
         
-        playBall.body.setCollisionGroup(pegCollisionGroup);
-        playBall.body.collides(pegCollisionGroup);
+        playBall.body.setCollisionGroup(ballCollisionGroup);
+        playBall.body.collides([pegCollisionGroup, bucketCollisionGroup]);
 
         //player.body.createGroupCallback(massCollisionGroup, absorb, this);
         // Set the callback method when player collides with another mass
-        playBall.body.createGroupCallback(pegCollisionGroup, score, this);
+        playBall.body.createGroupCallback(pegCollisionGroup, pegCollisionCallBack, this);
+        playBall.body.createGroupCallback(bucketCollisionGroup, bucketCallBack, this);
         playBall.body.debug = true;
         updateCannon();
         
@@ -146,44 +146,78 @@ window.onload = function() {
         text.anchor.setTo(0.5, 0.0);
         text.setText(game.world.centerX);
         
-        
+        // Game input
         cursors = game.input.keyboard.createCursorKeys();
         game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
+        
+        
+        var bucket = new Phaser.Circle(game.world.centerX, game.world.centerY, centerOffset);
+        //  Just to display the bounds
+        var graphics = game.add.graphics(bucket.x, bucket.y);
+        graphics.lineStyle(4, 0xffd900, 1);
+        graphics.drawCircle(0, 0, 1.5 * bucket.radius);
+        
+//        var bucketBody = new Phaser.Physics.P2.Body({game: this.game, mass: 0, x: game.world.centerX, y: game.world.centerY});
+        
+        var bucketSprite = game.add.sprite(game.world.centerX, game.world.centerY, null);
+        game.physics.p2.enable(bucketSprite);
+        bucketSprite.body.static = true;
+        bucketSprite.body.setCircle(bucket.radius * 0.75);
+        bucketSprite.body.debug = true;
+        bucketSprite.body.setCollisionGroup(bucketCollisionGroup);
+        bucketSprite.body.collides(ballCollisionGroup);
+        
+        
+        
     }
     
     function update() {
         //cannon.rotation++;
         
-        if (cursors.left.isDown) {
+
+        
+        
+        //score = 100;
+        if (pegGameState == 3) {
+            text.setText("Final Score: " + score + "\nBalls Remaining: " + ballsRemaining);
+
+        } else {
+                    if (cursors.left.isDown) {
             cannon.playAngle += 0.025;
         } else if (cursors.right.isDown) {
             cannon.playAngle -= 0.025;
         } else if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-            fireBall();
+            if (pegGameState == 0) {
+                fireBall();
+            }
         }
-        
-        updateCannon();
-        text.setText(cannon.angle);
+            updateCannon();
+               text.setText("Score: " + score + "\nBalls Remaining: " + ballsRemaining);
         
         if (pegGameState == 1) {
             applyGravity();
+        }     
         }
 
+
     }
-    function score(body1, body2) {
+    function pegCollisionCallBack(body1, body2) {
         pegs.remove(body2.sprite, true);
+        score += 100;
     }
     
     function applyGravity() {
         var angle = get_angle(playBall, {"x":game.world.centerX, "y":game.world.centerX});
-        playBall.body.force.x = Math.cos(angle) * 100;
-        playBall.body.force.y = Math.sin(angle) * 100;
+        playBall.body.force.x = Math.cos(angle) * 200;
+        playBall.body.force.y = Math.sin(angle) * 200;
     }
     
     function fireBall() {
         pegGameState = 1;
-        playBall.body.velocity.x = 100;
-        playBall.body.velocity.y = 100;
+        ballsRemaining--;
+        var angle = get_angle(playBall, {"x":game.world.centerX, "y":game.world.centerX});
+        playBall.body.velocity.x = 100 * Math.cos(angle);
+        playBall.body.velocity.y = 100 * Math.sin(angle);
 
     }
     
@@ -200,9 +234,17 @@ window.onload = function() {
         }
        
     }
+    function bucketCallBack() {
+        playBall.body.reset(cannon.x, cannon.y);
+        if (ballsRemaining > 0) {
+            pegGameState = 0;
+        } else {
+            pegGameState = 3;
+        }
+    }
     
     function render() {
-        game.debug.body(playBall);
+        //game.debug.body(playBall);
 //        game.debug.cameraInfo(game.camera, 32, 32);
     }
     
@@ -216,12 +258,7 @@ window.onload = function() {
         text.y = game.camera.y + game.camera.height - text.height;
     }
     
-    function absorb(body1, body2) {
-        sound.play('blip');
-        body1.mass += body2.mass; // Player absorbs mass
-        updateSize(body1.sprite); // Player grows
-        resetBody(body2); // Reset the mass that was absorbed
-    }
+
     
     function updateSize(sprite) {
         sprite.scale.setTo(Math.cbrt(sprite.body.mass/sprite.body.density)); // Update size based on mass and density
