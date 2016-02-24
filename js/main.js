@@ -16,8 +16,10 @@ window.onload = function() {
     var game = new Phaser.Game( 1000, 800, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update, render: render} );
     
     function preload() {
-        game.load.audio('blip', 'assets/Blip.ogg');
-        game.load.spritesheet('asteroid', 'assets/asteroid_sprite_sheet.png', 128, 128, 32);
+        game.load.audio('bounce', 'assets/bounce.ogg');
+        game.load.audio('bucket', 'assets/bucket.ogg');
+        game.load.audio('bonus', 'assets/bonus.ogg');
+        game.load.audio('shoot', 'assets/shoot.ogg');
         game.load.image('peg', 'assets/blueball.png');
         game.load.image('cannon', 'assets/cannon.png');
     }
@@ -56,12 +58,23 @@ window.onload = function() {
     
         var myText;
     
+    var bounceSound, bucketSound, bonusSound, shootSound;
+    
     function create() {
-        // Create sound sprite for blip noise
-    	sound = game.add.audio('blip');
-    	sound.allowMultiple = true;
-    	sound.addMarker('blip', 0.0, 1.0);
+        // Create sound sprites
+        bounceSound = game.add.audio('bounce');
+        bounceSound.allowMultiple = true;
+        bounceSound.addMarker('bounce', 0.0, 1.0);
         
+        bonusSound = game.add.audio('bonus');
+        bonusSound.allowMultiple = true;
+        bonusSound.addMarker('bonus', 0.0, 1.0);
+        
+        bucketSound = game.add.audio('bucket');
+        bucketSound.addMarker('bucket', 0.0, 1.0);
+        
+        shootSound = game.add.audio('shoot');
+        shootSound.addMarker('shoot', 0.0, 1.0);
         
         // Set the playable area
         game.world.setBounds(0, 0, 1000, 800);
@@ -69,7 +82,7 @@ window.onload = function() {
         game.physics.startSystem(Phaser.Physics.P2JS);
         
         // How much of the ball's velocity is recovered after a collision
-        game.physics.p2.restitution = 0.8;
+        game.physics.p2.restitution = 0.85;
         
         
         var bucketCollisionGroup = game.physics.p2.createCollisionGroup();
@@ -111,8 +124,8 @@ window.onload = function() {
         cannon.anchor.setTo(0.5, 0);
         
         playBall = game.add.sprite(0,0, 'peg');
-        playBall.scale.setTo(0.07);
-        playBall.anchor.setTo(0.5,0.5);
+        playBall.scale.setTo(0.05);
+        playBall.anchor.setTo(0.5, 0.5);
         game.physics.p2.enable(playBall);
         playBall.body.setCircle(playBall.height/2);
         playBall.body.damping = 0;
@@ -150,22 +163,10 @@ window.onload = function() {
         bucketSprite.body.setCircle(bucket.radius * 0.75);
         bucketSprite.body.debug = true;
         bucketSprite.body.setCollisionGroup(bucketCollisionGroup);
-        bucketSprite.body.collides(ballCollisionGroup);
-        
-        
-        
-        
-        
-        
+        bucketSprite.body.collides(ballCollisionGroup);   
     }
     
     function update() {
-        //cannon.rotation++;
-        
-
-        
-        
-        //score = 100;
         if (pegGameState == 3) {
             text.setText("Final Score: " + score);
             text.y = 300;
@@ -187,16 +188,15 @@ window.onload = function() {
                 applyGravity();
             }     
         }
-
-
     }
 
     function pegCollisionCallBack(body1, body2) {
         pegs.remove(body2.sprite, true);
-
-        
         if (body2.type == 'green') {
             bonusMultiplier *= 2;
+            bonusSound.play('bonus');
+        } else {
+            bounceSound.play('bounce');
         }
         var points = (100 + bonusAdder) * bonusMultiplier
         score += points;
@@ -217,12 +217,13 @@ window.onload = function() {
     }
     
     function applyGravity() {
-        var angle = get_angle(playBall, {"x":game.world.centerX, "y":game.world.centerX});
-        playBall.body.force.x = Math.cos(angle) * 200;
-        playBall.body.force.y = Math.sin(angle) * 200;
+        var angle = get_angle(playBall, {"x":game.world.centerX, "y":game.world.centerY});
+        playBall.body.force.x = Math.cos(angle) * 280;
+        playBall.body.force.y = Math.sin(angle) * 280;
     }
     
     function fireBall() {
+        shootSound.play('shoot');
         pegGameState = 1;
         ballsRemaining--;
         var angle = get_angle(playBall, {"x":game.world.centerX, "y":game.world.centerX});
@@ -232,19 +233,18 @@ window.onload = function() {
     }
     
     function updateCannon() {
-        //cannon.angle = 0;
-        
         cannon.x = game.world.centerX + maxRadius * (Math.cos(cannon.playAngle));
         cannon.y = game.world.centerY + maxRadius * (Math.sin(cannon.playAngle));
         cannon.rotation = cannon.playAngle - Math.PI/2;
         
-        if (pegGameState == 0) {
+        if (pegGameState == 0) { // Keep the ball atttached to the cannon
             playBall.body.x = cannon.x;
             playBall.body.y = cannon.y;  
         }
-       
     }
+    
     function bucketCallBack() {
+        bucketSound.play('bucket');
         playBall.body.reset(cannon.x, cannon.y);
         bonusAdder = 0;
         bonusMultiplier = 1;
@@ -255,10 +255,7 @@ window.onload = function() {
         }
     }
     
-    function render() {
-        //game.debug.body(playBall);
-//        game.debug.cameraInfo(game.camera, 32, 32);
-    }
+    function render() {}
     
     function debugGame () {
         text.setText("\
