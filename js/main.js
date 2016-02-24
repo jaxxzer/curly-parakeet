@@ -13,7 +13,7 @@ window.onload = function() {
     
     "use strict";
     
-    var game = new Phaser.Game( 1000, 1000, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update, render: render} );
+    var game = new Phaser.Game( 1000, 800, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update, render: render} );
     
     function preload() {
         game.load.audio('blip', 'assets/Blip.ogg');
@@ -22,6 +22,8 @@ window.onload = function() {
         game.load.image('cannon', 'assets/cannon.png');
     }
     
+    var bonusAdder = 0;
+    var bonusMultiplier = 1;
     var cannon;
     var text;
     
@@ -52,6 +54,8 @@ window.onload = function() {
     
     var pegGameState = 0;
     
+        var myText;
+    
     function create() {
         // Create sound sprite for blip noise
     	sound = game.add.audio('blip');
@@ -60,7 +64,7 @@ window.onload = function() {
         
         
         // Set the playable area
-        game.world.setBounds(0, 0, 1000, 1000);
+        game.world.setBounds(0, 0, 1000, 800);
         
         game.physics.startSystem(Phaser.Physics.P2JS);
         
@@ -82,16 +86,11 @@ window.onload = function() {
         for (var i = 0; i < numRings; i++) {
             radius = i * spacing + centerOffset;
             var numPegs = Math.floor(((i + 1) * 8 + (i * .5)));
-            //numPegs = 10;
             for (var j = 0; j < numPegs; j++) {
-                angle = (j * 2 * Math.PI/numPegs) + 0.1 * i;
+                angle = (j * 2 * Math.PI/numPegs) + ((2 * Math.PI)/(numRings+1)) * i;
                 var peg = pegs.create(0, 0, 'peg');
-//                peg = game.add.sprite( 0 , 0, 'peg');
-                //peg.scale.setTo(0.1, 0.1);
                 peg.anchor.setTo(0.5, 0.5);
                 peg.scale.setTo(0.02);
-
-                
                 game.physics.p2.enable(peg);
                 peg.body.setCircle(peg.height/2);
                 peg.body.x = game.world.centerX + radius * (Math.cos(angle));
@@ -99,43 +98,30 @@ window.onload = function() {
                 peg.body.setCollisionGroup(pegCollisionGroup);
                 peg.body.collides(ballCollisionGroup);
                 peg.body.static = true;
-                
-                //pegCollisionGroup.add(peg);
-                //peg.body.collideWorldBounds = false;
-                
-
-            }
-       
-            
+                peg.body.type = 'blue';
+                peg.tint = 0x0000ff;
+            } 
+            peg.body.type = 'green';
+            peg.tint = 0x00ff00;
         }
-        
         
         cannon = game.add.sprite(0, 0, 'cannon');
         cannon.playAngle = 0;
-        cannon.scale.setTo(0.2);
+        cannon.scale.setTo(0.4);
         cannon.anchor.setTo(0.5, 0);
-        
-        
         
         playBall = game.add.sprite(0,0, 'peg');
         playBall.scale.setTo(0.07);
         playBall.anchor.setTo(0.5,0.5);
-        
-
-        
         game.physics.p2.enable(playBall);
         playBall.body.setCircle(playBall.height/2);
-        
         playBall.body.damping = 0;
-        
         playBall.body.setCollisionGroup(ballCollisionGroup);
         playBall.body.collides([pegCollisionGroup, bucketCollisionGroup]);
-
-        //player.body.createGroupCallback(massCollisionGroup, absorb, this);
-        // Set the callback method when player collides with another mass
         playBall.body.createGroupCallback(pegCollisionGroup, pegCollisionCallBack, this);
         playBall.body.createGroupCallback(bucketCollisionGroup, bucketCallBack, this);
         playBall.body.debug = true;
+        
         updateCannon();
         
 
@@ -149,7 +135,6 @@ window.onload = function() {
         // Game input
         cursors = game.input.keyboard.createCursorKeys();
         game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
-        
         
         var bucket = new Phaser.Circle(game.world.centerX, game.world.centerY, centerOffset);
         //  Just to display the bounds
@@ -169,6 +154,9 @@ window.onload = function() {
         
         
         
+        
+        
+        
     }
     
     function update() {
@@ -179,7 +167,8 @@ window.onload = function() {
         
         //score = 100;
         if (pegGameState == 3) {
-            text.setText("Final Score: " + score + "\nBalls Remaining: " + ballsRemaining);
+            text.setText("Final Score: " + score);
+            text.y = 300;
 
         } else {
                     if (cursors.left.isDown) {
@@ -192,18 +181,39 @@ window.onload = function() {
             }
         }
             updateCannon();
-               text.setText("Score: " + score + "\nBalls Remaining: " + ballsRemaining);
+               text.setText("Score: " + score + "\nBalls Remaining: " + ballsRemaining + "\nStreak Bonus: " + bonusAdder + "\nBonus Multiplier: " + bonusMultiplier);
         
-        if (pegGameState == 1) {
-            applyGravity();
-        }     
+            if (pegGameState == 1) {
+                applyGravity();
+            }     
         }
 
 
     }
+
     function pegCollisionCallBack(body1, body2) {
         pegs.remove(body2.sprite, true);
-        score += 100;
+
+        
+        if (body2.type == 'green') {
+            bonusMultiplier *= 2;
+        }
+        var points = (100 + bonusAdder) * bonusMultiplier
+        score += points;
+        
+        bonusAdder += 10;
+        
+        var myText;
+        var style = { font: "18px Verdana", fill: "#ffffff", align: "center" };
+        myText = game.add.text( body2.x, body2.y, 100, style );
+        myText.anchor.setTo(0.5, 0.5);
+        myText.setText(points);
+        myText.x = body2.x;
+        myText.y = body2.y;
+        myText.alpha = 1;
+        game.time.events.add(0, function() {
+            game.add.tween(myText).to({y: body2.y - 30}, 500, Phaser.Easing.Linear.None, true);    game.add.tween(myText).to({alpha: 0}, 500, Phaser.Easing.Linear.None, true);
+        }, this);
     }
     
     function applyGravity() {
@@ -236,6 +246,8 @@ window.onload = function() {
     }
     function bucketCallBack() {
         playBall.body.reset(cannon.x, cannon.y);
+        bonusAdder = 0;
+        bonusMultiplier = 1;
         if (ballsRemaining > 0) {
             pegGameState = 0;
         } else {
